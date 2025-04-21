@@ -1,0 +1,440 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Podcast Platform API",
+        "description": "API documentation for the Podcast platform",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://my-default-host.com",
+            "description": "Localhost API Server"
+        },
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/v1/categories/episodes": {
+            "get": {
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get paginated episodes with optional filtering and sorting",
+                "operationId": "259ef9915b52bab455791b1ea1c1ad4c",
+                "parameters": [
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "description": "Filter episodes by category ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sort by popularity (values: popular or latest)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "popular",
+                                "latest"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response"
+                    }
+                }
+            }
+        },
+        "/api/v1/episodes/{episode}": {
+            "get": {
+                "tags": [
+                    "Episodes"
+                ],
+                "summary": "Get single episode with next episodes in queue",
+                "operationId": "384a497d10d041634be276aca576b251",
+                "parameters": [
+                    {
+                        "name": "episode",
+                        "in": "path",
+                        "description": "ID of the episode",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Episode details with next episodes in queue",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Episode details"
+                                        },
+                                        "payload": {
+                                            "properties": {
+                                                "episode": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 1
+                                                        },
+                                                        "episode_image": {
+                                                            "type": "string",
+                                                            "example": "https://example.com/image.jpg"
+                                                        },
+                                                        "podcast_title": {
+                                                            "type": "string",
+                                                            "example": "Health Talks"
+                                                        },
+                                                        "episode_title": {
+                                                            "type": "string",
+                                                            "example": "Episode 1 - Introduction"
+                                                        },
+                                                        "episode_description": {
+                                                            "type": "string",
+                                                            "example": "Episode 1 - Introduction"
+                                                        },
+                                                        "duration": {
+                                                            "type": "string",
+                                                            "example": "00:30:45"
+                                                        },
+                                                        "audio_url": {
+                                                            "type": "string",
+                                                            "example": "https://example.com/audio.mp3"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "example": "2025-04-21 12:34:56"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "next_in_queue": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "episode_image": {
+                                                                "type": "string"
+                                                            },
+                                                            "episode_title": {
+                                                                "type": "string"
+                                                            },
+                                                            "episode_description": {
+                                                                "type": "string"
+                                                            },
+                                                            "duration": {
+                                                                "type": "string"
+                                                            },
+                                                            "audio_url": {
+                                                                "type": "string"
+                                                            },
+                                                            "created_at": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Episode not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "error"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Episode not found"
+                                        },
+                                        "payload": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/landing": {
+            "get": {
+                "tags": [
+                    "Landing Page"
+                ],
+                "summary": "Get landing page content",
+                "description": "Returns Editor’s Picks, Trending Podcasts, Newly Added Episodes, and Episodes grouped by category",
+                "operationId": "9a403df9149e2321b4ce4d8edb27e786",
+                "responses": {
+                    "200": {
+                        "description": "Landing page data loaded successfully"
+                    }
+                }
+            }
+        },
+        "/api/v1/podcasts": {
+            "get": {
+                "tags": [
+                    "Podcasts"
+                ],
+                "summary": "Get paginated podcasts with episodes",
+                "description": "Returns a paginated list of podcasts. Each podcast includes all its episodes.",
+                "operationId": "ab3cd379616e8d44b0121f800d608ab1",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number (1 podcast per page)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated podcast with episodes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Podcasts retrieved"
+                                        },
+                                        "payload": {
+                                            "properties": {
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "title": {
+                                                                "type": "string"
+                                                            },
+                                                            "description": {
+                                                                "type": "string"
+                                                            },
+                                                            "image": {
+                                                                "type": "string"
+                                                            },
+                                                            "platforms": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "episodes": {
+                                                                "type": "array",
+                                                                "items": {
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "integer"
+                                                                        },
+                                                                        "title": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "description": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "image": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "duration": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "audio_url": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "created_at": {
+                                                                            "type": "string",
+                                                                            "format": "date-time"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "meta": {
+                                                    "type": "object"
+                                                },
+                                                "links": {
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "title": "Category",
+                "description": "Category model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the category",
+                        "type": "string",
+                        "example": "News & Storytelling"
+                    },
+                    "created_at": {
+                        "description": "When the category was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "When the category was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Episode": {
+                "title": "Episode",
+                "description": "Episode model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "description": "Title of the episode",
+                        "type": "string",
+                        "example": "The Future of Tech"
+                    },
+                    "podcast_id": {
+                        "description": "Podcast ID the episode belongs to",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "description": "When the episode was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "When the episode was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            },
+            "Podcast": {
+                "title": "Podcast",
+                "description": "Podcast model",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "description": "Title of the podcast",
+                        "type": "string",
+                        "example": "Tech Talk"
+                    },
+                    "category_id": {
+                        "description": "Category ID the podcast belongs to",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "created_at": {
+                        "description": "When the podcast was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T12:00:00Z"
+                    },
+                    "updated_at": {
+                        "description": "When the podcast was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-01T12:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Categories",
+            "description": "Categories"
+        },
+        {
+            "name": "Episodes",
+            "description": "Episodes"
+        },
+        {
+            "name": "Landing Page",
+            "description": "Landing Page"
+        },
+        {
+            "name": "Podcasts",
+            "description": "Podcasts"
+        }
+    ]
+}
