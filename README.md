@@ -45,5 +45,11 @@ docker-compose exec app composer install
 # Generate application key
 docker-compose exec app php artisan key:generate
 
-# Run migrations
+# Run migrations and seed data
 docker-compose exec app php artisan migrate:fresh --seed
+
+# Generate Api documentation
+docker-compose exec app php artisan l5-swagger:generate
+
+# Api documentation url
+http://localhost:8000/api/documentation
